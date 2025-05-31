@@ -12,18 +12,16 @@
         {
             "src": "*.html",
             "use": "@vercel/static"
+        },
+        {
+            "src": "*.css",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
         {
             "src": "/socket.io/(.*)",
-            "dest": "server.js",
-            "headers": {
-                "Connection": "upgrade",
-                "Upgrade": "$http_upgrade",
-                "Sec-WebSocket-Key": "$http_sec_websocket_key",
-                "Sec-WebSocket-Version": "$http_sec_websocket_version"
-            }
+            "dest": "server.js"
         },
         {
             "src": "/game.js",
