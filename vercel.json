@@ -4,29 +4,9 @@
         {
             "src": "server.js",
             "use": "@vercel/node"
-        },
-        {
-            "src": "*.js",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "*.html",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "*.css",
-            "use": "@vercel/static"
         }
     ],
     "routes": [
-        {
-            "src": "/socket.io/(.*)",
-            "dest": "server.js"
-        },
-        {
-            "src": "/game.js",
-            "dest": "/game.js"
-        },
         {
             "src": "/(.*)",
             "dest": "server.js"
