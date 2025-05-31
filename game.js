@@ -37,8 +37,15 @@ function init() {
 
 // Connect to the real Socket.io server
 function connectToServer() {
-    // Connect to the server (default to same host)
-    socket = io();
+    // Connect to the server with explicit configuration for Vercel deployment
+    const options = {
+        transports: ['websocket'],
+        upgrade: false,
+        reconnection: true,
+        reconnectionAttempts: 5
+    };
+    
+    socket = io(options);
     
     // Set up socket event handlers
     socket.on('game-state', handleGameState);
@@ -48,7 +55,12 @@ function connectToServer() {
     socket.on('bullet-new', handleNewBullet);
     socket.on('player-hit', handlePlayerHit);
     socket.on('player-respawn', handlePlayerRespawn);
-    socket.on('score-update', handleScoreUpdate);
+    
+    // Add connection error handling
+    socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+        // You could display an error message to the user here
+    });
 }
 
 // Handle initial game state
