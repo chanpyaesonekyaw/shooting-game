@@ -17,7 +17,13 @@
     "routes": [
         {
             "src": "/socket.io/(.*)",
-            "dest": "server.js"
+            "dest": "server.js",
+            "headers": {
+                "Connection": "upgrade",
+                "Upgrade": "$http_upgrade",
+                "Sec-WebSocket-Key": "$http_sec_websocket_key",
+                "Sec-WebSocket-Version": "$http_sec_websocket_version"
+            }
         },
         {
             "src": "/game.js",

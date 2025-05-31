@@ -5,7 +5,18 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+
+// Configure Socket.io with CORS and serverless-friendly options
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket', 'polling'],
+  allowEIO3: true,
+  pingTimeout: 30000,
+  pingInterval: 25000
+});
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '/')));

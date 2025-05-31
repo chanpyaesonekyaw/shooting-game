@@ -39,13 +39,21 @@ function init() {
 function connectToServer() {
     // Connect to the server with explicit configuration for Vercel deployment
     const options = {
-        transports: ['websocket'],
-        upgrade: false,
+        transports: ['websocket', 'polling'],  // Try both transports
+        upgrade: true,                         // Allow transport upgrade
         reconnection: true,
-        reconnectionAttempts: 5
+        reconnectionAttempts: 10,              // Increased attempts
+        reconnectionDelay: 1000,               // Start with 1s delay
+        reconnectionDelayMax: 5000,            // Max 5s delay
+        timeout: 20000                         // Longer timeout
     };
     
-    socket = io(options);
+    // For production, use the current URL as the Socket.io server
+    const serverUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000' 
+        : window.location.origin;
+    
+    socket = io(serverUrl, options);
     
     // Set up socket event handlers
     socket.on('game-state', handleGameState);
@@ -59,7 +67,24 @@ function connectToServer() {
     // Add connection error handling
     socket.on('connect_error', (error) => {
         console.error('Connection error:', error);
-        // You could display an error message to the user here
+        // Display an error message to the user
+        const startMenu = document.getElementById('startMenu');
+        if (startMenu) {
+            startMenu.innerHTML = `<h2>Connection Error</h2><p>Could not connect to the game server. Please try again later.</p><button id="retryButton">Retry Connection</button>`;
+            document.getElementById('retryButton').addEventListener('click', () => {
+                window.location.reload();
+            });
+            startMenu.style.display = 'block';
+        }
+    });
+    
+    // Add reconnection handling
+    socket.on('reconnect', (attemptNumber) => {
+        console.log(`Reconnected after ${attemptNumber} attempts`);
+    });
+    
+    socket.on('reconnect_attempt', (attemptNumber) => {
+        console.log(`Reconnection attempt: ${attemptNumber}`);
     });
 }
 
